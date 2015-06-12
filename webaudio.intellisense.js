@@ -33,7 +33,54 @@ AudioContext = function () {
         }
     }
 
-    
+    var AudioParam = function () {
+        /// <summa ry>AudioParam controls an individual aspect of an AudioNode's functioning, such as volume. The parameter can be set immediately to a particular value using the value attribute. Or, value changes can be scheduled to happen at very precise times (in the coordinate system of AudioContext's currentTime attribute), for envelopes, volume fades, LFOs, filter sweeps, grain windows, etc. In this way, arbitrary timeline-based automation curves can be set on any AudioParam. Additionally, audio signals from the outputs of AudioNodes can be connected to an AudioParam, summing with the intrinsic parameter value.</summary>
+        /// <field name='value' type='Number'>defaultValue of type float, readonly. Initial value for the 'value' attribute.</field>
+        /// <field name='defaultValue' type='Number'>The parameter's floating-point value. This attribute is initialized to the defaultValue. If value is set during a time when there are any automation events scheduled then it will be ignored and no exception will be thrown.</field>
+
+        this.setValueAtTime = function (value, startTime) {
+            /// <summary>Schedules a parameter value change at the given time.</summary>
+            /// <param name='value' type='float'>The value parameter is the value the parameter will change to at the given time.</param>
+            /// <param name='startTime' type='double'>The startTime parameter is the time in the same time coordinate system as the AudioContext's currentTime attribute. An InvalidAccessError exception must be thrown if startTime is negative or is not a finite number.</param>
+            /// <returns type='void'></returns>
+        }
+        this.linearRampToValueAtTime = function (value, endTime) {
+            /// <summary>Schedules a linear continuous change in parameter value from the previous scheduled parameter value to the given value.</summary>
+            /// <param name='value' type='float'>The value parameter is the value the parameter will linearly ramp to at the given time.</param>
+            /// <param name='endTime' type='double'>he endTime parameter is the time in the same time coordinate system as the AudioContext's currentTime attribute. An InvalidAccessError exception must be thrown if endTime is negative or is not a finite number.</param>
+            /// <returns type='void'></returns>
+        }
+        this.exponentialRampToValueAtTime = function (value, endTime) {
+            /// <summary>
+            /// <para>Schedules an exponential continuous change in parameter value from the previous scheduled parameter value to the given value. Parameters representing filter frequencies and playback rate are best changed exponentially because of the way humans perceive sound.</para>
+            /// <para></para>
+            /// <para>The value parameter is the value the parameter will exponentially ramp to at the given time. A NotSupportedError exception must be thrown if this value is less than or equal to 0, or if the value at the time of the previous event is less than or equal to 0.</para>
+            /// </summary>
+            /// <param name='value' type='float'>The value parameter is the value the parameter will exponentially ramp to at the given time. A NotSupportedError exception must be thrown if this value is less than or equal to 0, or if the value at the time of the previous event is less than or equal to 0.</param>
+            /// <param name='endTime' type='double'>The endTime parameter is the time in the same time coordinate system as the AudioContext's currentTime attribute. An InvalidAccessError exception must be thrown if endTime is negative or is not a finite number.</param>
+            /// <returns type='void'></returns>
+        }
+        this.setTargetAtTime = function (target, startTime, timeConstant) {
+            /// <summary>Start exponentially approaching the target value at the given time with a rate having the given time constant. Among other uses, this is useful for implementing the "decay" and "release" portions of an ADSR envelope. Please note that the parameter value does not immediately change to the target value at the given time, but instead gradually changes to the target value.</summary>
+            /// <param name='target' type='float'>The target parameter is the value the parameter will start changing to at the given time.</param>
+            /// <param name='startTime' type='double'>The startTime parameter is the time in the same time coordinate system as the AudioContext's currentTime attribute. An InvalidAccessError exception must be thrown if start is negative or is not a finite number.</param>
+            /// <param name='timeConstant' type='float'>The timeConstant parameter is the time-constant value of first-order filter (exponential) approach to the target value. The larger this value is, the slower the transition will be.</param>
+            /// <returns type='void'></returns>
+        }
+        this.setValueCurveAtTime = function (values, startTime, duration) {
+            /// <summary>Sets an array of arbitrary parameter values starting at the given time for the given duration. The number of values will be scaled to fit into the desired duration.</summary>
+            /// <param name='values' type='Float32Array'>The values parameter is a Float32Array representing a parameter value curve. These values will apply starting at the given time and lasting for the given duration. Any modification to the the array used as values argument after the call won't have any effect on the AudioParam.</param>
+            /// <param name='startTime' type='double'>The startTime parameter is the time in the same time coordinate system as the AudioContext's currentTime attribute. An InvalidAccessError exception must be thrown if startTime is negative or is not a finite number.</param>
+            /// <param name='duration' type='double'>The duration parameter is the amount of time in seconds (after the time parameter) where values will be calculated according to the values parameter.</param>
+            /// <returns type='void'></returns>
+        }
+        this.cancelScheduledValues = function (startTime) {
+            /// <summary>Cancels all scheduled parameter changes with times greater than or equal to startTime.</summary>
+            /// <param name='startTime' type='double'>The startTime parameter is the starting time at and after which any previously scheduled parameter changes will be cancelled. It is a time in the same time coordinate system as the AudioContext's currentTime attribute. An InvalidAccessError exception must be thrown if startTime is negative or is not a finite number.</param>
+            /// <returns type='void'></returns>
+        }
+    }
+
     var AnalyserNode = function () {
         ///<summary>
         /// This interface represents a node which is able to provide real-time frequency and time-domain analysis information. The audio stream will be passed un-processed from input to output. 
@@ -62,8 +109,8 @@ AudioContext = function () {
         }
     }
     AnalyserNode.prototype = new AudioNode();
-    
-    var BiquadFilterNode=function() {
+
+    var BiquadFilterNode = function () {
         /// <summary>BiquadFilterNode is an AudioNode processor implementing common low-order filters, which are the building blocks of basic tone controls (bass, mid, treble), graphic equalizers, and more advanced filters. Multiple BiquadFilterNode filters can be combined to form more complex filters. Each BiquadFilterNode can be configured as one of a number of common filter types as listed in the type property page, linked below. The default filter type is LOWPASS. </summary>
         /// <field name='Q' type='Number'>Used in different ways by the various types. Defaults to 1, with a nominal range of 0.0001 to 1000. This parameter is k-rate. </field>
         /// <field name='frequency' type='Number'> Used in different ways by the various types. Defaults to 350Hz, with a nominal range of 10 to the Nyquist frequency (half the sample-rate). This parameter is k-rate</field>
@@ -90,11 +137,36 @@ AudioContext = function () {
     }
     BiquadFilterNode.prototype = new AudioNode();
 
+    var AudioBuffer = function () {
+        /// <summary>This interface represents a memory-resident audio asset, primarily for one-shot sounds and other short audio clips. Its format is non-interleaved IEEE 32-bit linear PCM with a nominal range of -1 -> +1. It can contain one or more channels. </summary>
 
+        /// <field name='sampleRate' type='Number'>The sample rate, in samples per second, for the PCM audio data. </field>
+        /// <field name='length' type='Number'>Length, in sample-frames, of the PCM audio data. </field>
+        /// <field name='duration' type='Number'>Duration, in seconds, of the PCM audio data in the buffer. </field>
+        /// <field name='numberOfChannels' type='Number'>The number of discrete audio channels described by the PCM audio data. </field>
+        this.getChannelData = function (channel) {
+            // Returns the Float32Array representing the PCM audio data for the specific channel. 
+        }
+
+
+        //Float32Array getChannelData (unsigned long channel);
+        //this.copyFromChannel = function(destination, channelNumber,startInChannel){}
+        //    //void         copyFromChannel (Float32Array destination, long channelNumber, optional unsigned long startInChannel = 0
+        ////);
+        //this.copyToChannel = function (source, channelNumber, startInChannel) { }
+        //    //void         copyToChannel (Float32Array source, long channelNumber, optional unsigned long startInChannel = 0
+        //    //  );
+        //};
+    }
     var OscilatorNode = function () {
 
     }
     OscilatorNode.prototype = new AudioNode();
+
+    var GainNode = function () {
+        ///<field name='gain' type='AudioParam'>gain</field>        
+    }
+    GainNode.prototype = new AudioNode();
     // **************************************************************************************
     // **************************************************************************************
     // ** Functions
@@ -136,6 +208,7 @@ AudioContext = function () {
     }
     this.createGain = function () {
         ///<summary>Creates a GainNode, used to control the volume of audio.  </summary>
+        return new GainNode();
     }
     this.createMediaElementSource = function () {
         ///<summary>Creates a MediaElementAudioSourceNode, given an HTMLMediaElement. As a consequence of calling this method, audio playback from the HTMLMediaElement will be re-routed into the processing graph of the AudioContext.  </summary>
@@ -162,6 +235,7 @@ AudioContext = function () {
 
 
 }
+
 
 // ** Copy-paste repository **
 // <field name='' type=''></field>
