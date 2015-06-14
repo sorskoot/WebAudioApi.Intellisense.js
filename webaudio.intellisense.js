@@ -34,10 +34,9 @@ AudioContext = function () {
     }
 
     var AudioParam = function () {
-        /// <summa ry>AudioParam controls an individual aspect of an AudioNode's functioning, such as volume. The parameter can be set immediately to a particular value using the value attribute. Or, value changes can be scheduled to happen at very precise times (in the coordinate system of AudioContext's currentTime attribute), for envelopes, volume fades, LFOs, filter sweeps, grain windows, etc. In this way, arbitrary timeline-based automation curves can be set on any AudioParam. Additionally, audio signals from the outputs of AudioNodes can be connected to an AudioParam, summing with the intrinsic parameter value.</summary>
+        /// <summary>AudioParam controls an individual aspect of an AudioNode's functioning, such as volume. The parameter can be set immediately to a particular value using the value attribute. Or, value changes can be scheduled to happen at very precise times (in the coordinate system of AudioContext's currentTime attribute), for envelopes, volume fades, LFOs, filter sweeps, grain windows, etc. In this way, arbitrary timeline-based automation curves can be set on any AudioParam. Additionally, audio signals from the outputs of AudioNodes can be connected to an AudioParam, summing with the intrinsic parameter value.</summary>
         /// <field name='value' type='Number'>defaultValue of type float, readonly. Initial value for the 'value' attribute.</field>
         /// <field name='defaultValue' type='Number'>The parameter's floating-point value. This attribute is initialized to the defaultValue. If value is set during a time when there are any automation events scheduled then it will be ignored and no exception will be thrown.</field>
-
         this.setValueAtTime = function (value, startTime) {
             /// <summary>Schedules a parameter value change at the given time.</summary>
             /// <param name='value' type='float'>The value parameter is the value the parameter will change to at the given time.</param>
@@ -158,9 +157,43 @@ AudioContext = function () {
         //    //  );
         //};
     }
-    var OscilatorNode = function () {
-
+    /**
+     * @readonly
+     * @enum {string}
+     */
+    var OscillatorType = {
+        sine: "sine",
+        square: "square",
+        sawtooth: "sawtooth",
+        triangle: "triangle",
+        custom: "custom"
+    };
+    var PeriodicWave = function () {
+        ///<summary>PeriodicWave represents an arbitrary periodic waveform to be used with an OscillatorNode.</summary>
     }
+    var OscilatorNode = function () {
+        /// <summary>OscillatorNode represents an audio source generating a periodic waveform. It can be set to a few commonly used waveforms. Additionally, it can be set to an arbitrary periodic waveform through the use of a PeriodicWave object. </summary>
+        /// <field name='type' type='OscillatorType'>The shape of the periodic waveform. It may directly be set to any of the type constant values except for "custom". The setPeriodicWave() method can be used to set a custom waveform, which results in this attribute being set to "custom". The default value is "sine". When this attribute is set, the phase of the oscillator MUST be conserved.</field>
+        /// <field name='frequency' type='AudioParam'>The frequency (in Hertz) of the periodic waveform. Its default value is 440. This parameter is a-rate. </field>
+        /// <field name='detune' type='AudioParam'>A detuning value (in Cents) which will offset the frequency by the given amount. Its default value is 0. This parameter is a-rate. </field>
+        /// <field name='onended' type='EventHandler'>A property used to set the EventHandler (described in HTML[HTML]) for the ended event that is dispatched to OscillatorNode node types. When the OscillatorNode has finished playing (i.e. its stop time has been reached), an event of type Event (described in HTML[HTML]) will be dispatched to the event handler. </field>
+        this.start = function (when) {
+            /// <summary>Defined the same as the when parameter of the <seealso>AudioBufferSourceNode.</seealso> </summary>
+            /// <returns type='void'></returns>
+            /// <param name='when' type='double' optional='true'></param 
+        }
+        this.stop = function (when) {
+            /// <summary>Defined as in AudioBufferSourceNode.</summary>
+            /// <returns type='void'></returns>
+            /// <param name='when' type='double' optional='true'></param 
+        }
+        this.setPeriodicWave = function (periodicWave) {
+            /// <summary>Sets an arbitrary custom periodic waveform given a PeriodicWave. </summary>
+            /// <returns type='void'></returns>
+            /// <param name='periodicWave' type='PeriodicWave' mayBeNull='false'></param>
+        }
+    }
+
     OscilatorNode.prototype = new AudioNode();
 
     var GainNode = function () {
@@ -218,6 +251,7 @@ AudioContext = function () {
     }
     this.createOscillator = function () {
         ///<summary>Creates an OscillatorNode, a source representing a periodic waveform. It basically generates a constant tone..  </summary>      
+        return new OscilatorNode();
     }
     this.createPanner = function () {
         ///<summary>Creates a PannerNode, used to spatialize an incoming audio stream in 3D space..  </summary>
