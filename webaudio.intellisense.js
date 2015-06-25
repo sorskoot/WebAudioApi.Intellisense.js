@@ -138,25 +138,57 @@ AudioContext = function () {
 
     var AudioBuffer = function () {
         /// <summary>This interface represents a memory-resident audio asset, primarily for one-shot sounds and other short audio clips. Its format is non-interleaved IEEE 32-bit linear PCM with a nominal range of -1 -> +1. It can contain one or more channels. </summary>
-
-        /// <field name='sampleRate' type='Number'>The sample rate, in samples per second, for the PCM audio data. </field>
-        /// <field name='length' type='Number'>Length, in sample-frames, of the PCM audio data. </field>
-        /// <field name='duration' type='Number'>Duration, in seconds, of the PCM audio data in the buffer. </field>
-        /// <field name='numberOfChannels' type='Number'>The number of discrete audio channels described by the PCM audio data. </field>
+        /// <field name='sampleRate' type='float'>The sample rate, in samples per second, for the PCM audio data. </field>
+        /// <field name='length' type='long'>Length, in sample-frames, of the PCM audio data. </field>
+        /// <field name='duration' type='double'>Duration, in seconds, of the PCM audio data in the buffer. </field>
+        /// <field name='numberOfChannels' type='long'>The number of discrete audio channels described by the PCM audio data. </field>
         this.getChannelData = function (channel) {
-            // Returns the Float32Array representing the PCM audio data for the specific channel. 
+            /// <summary>Returns the Float32Array representing the PCM audio data for the specific channel. </summary>
+            /// <param name='channel' type='unsigned long'>This parameter is an index representing the particular channel to get data for. An index value of 0 represents the first channel. This index value MUST be less than numberOfChannels or an IndexSizeError exception MUST be thrown. </param>
+            /// <returns type='Float32Array'>The channel data</returns>
         }
-
-
-        //Float32Array getChannelData (unsigned long channel);
-        //this.copyFromChannel = function(destination, channelNumber,startInChannel){}
-        //    //void         copyFromChannel (Float32Array destination, long channelNumber, optional unsigned long startInChannel = 0
-        ////);
-        //this.copyToChannel = function (source, channelNumber, startInChannel) { }
-        //    //void         copyToChannel (Float32Array source, long channelNumber, optional unsigned long startInChannel = 0
-        //    //  );
-        //};
+        this.copyToChannel = function (source, channelNumber, startInChannel) {
+            /// <summary>The copyToChannel method copies the samples to the specified channel of the AudioBuffer, from the source array. </summary>
+            /// <param name='source' type='Float32Array' optional='false' mayBeNull='false' >The array the channel data will be copied from. </param>
+            /// <param name='channelNumber' type='long' optional='false' mayBeNull='false' >The index of the channel to copy the data to. If channelNumber is greater or equal than the number of channel of the AudioBuffer, an IndexSizeError MUST be thrown. </param>
+            /// <param name='startInChannel' type='unsigned long' optional='false' mayBeNull='true' >An optional offset to copy the data to. If startInChannel is greater than the length of the AudioBuffer, an IndexSizeError MUST be thrown. </param>
+            /// <returns type='void'></returns>
+        }
+        this.copyFromChannel = function (destination, channelNumber, startInChannel) {
+            /// <summary>The copyFromChannel method copies the samples from the specified channel of the AudioBuffer to the destination array. </summary>
+            /// <param name='source' type='Float32Array' optional='false' mayBeNull='false' >The array the channel data will be copied to. </param>
+            /// <param name='channelNumber' type='long' optional='false' mayBeNull='false' >The index of the channel to copy the data from. If channelNumber is greater or equal than the number of channel of the AudioBuffer, an IndexSizeError MUST be thrown. </param>
+            /// <param name='startInChannel' type='unsigned long' optional='false' mayBeNull='true' >An optional offset to copy the data from. If startInChannel is greater than the length of the AudioBuffer, an IndexSizeError MUST be thrown. </param>
+            /// <returns type='void'></returns>
+        }
     }
+
+    var AudioBufferSourceNode = function () {
+        /// <summary>This interface represents an audio source from an in-memory audio asset in an AudioBuffer. It is useful for playing short audio assets which require a high degree of scheduling flexibility (can playback in rhythmically perfect ways). The start() method is used to schedule when sound playback will happen. The playback will stop automatically when the buffer's audio data has been completely played (if the loop attribute is false), or when the stop() method has been called and the specified time has been reached. Please see more details in the start() and stop() description. start() and stop() may not be issued multiple times for a given AudioBufferSourceNode. </summary>
+        /// <field name='buffer' type='AudioBuffer' mayBeNull='true'>Represents the audio asset to be played. </field>
+        /// <field name='detune' type='AudioParam' >An aditional parameter to modulate the speed at which is rendered the audio stream. Its default value is 0. Its nominal range is [-1200; 1200]. This parameter is k-rate. </field>
+        /// <field name='loop' type='boolean'>Indicates if the audio data should play in a loop. The default value is false. </field>
+        /// <field name='loopEnd' type='double'>An optional value in seconds where looping should end if the loop attribute is true. Its default value is 0, and it may usefully be set to any value between 0 and the duration of the buffer.</field>
+        /// <field name='loopStart' type='double'>An optional value in seconds where looping should begin if the loop attribute is true. Its default value is 0, and it may usefully be set to any value between 0 and the duration of the buffer. </field>
+        /// <field name='playbackRate' type='AudioParam'>The speed at which to render the audio stream. Its default value is 1. This parameter is k-rate. </field>
+        /// <field name='onended' type='EventHandler'>A property used to set the EventHandler (described in   HTML[HTML]) for the ended event that is dispatched to AudioBufferSourceNode node types. When the playback of the buffer for an AudioBufferSourceNode is finished, an event of type Event (described in  HTML [HTML]) will be dispatched to the event handler. </field>
+        this.start = function (when, offset, duration) {
+            /// <summary>Schedules a sound to playback at an exact time. </summary>
+            /// <returns type='void'></returns>
+            /// <param name='when' type='double' mayBeNull='false' optional='true'>The when parameter describes at what time (in seconds) the sound should start playing. It is in the same time coordinate system as the AudioContext's currentTime attribute. If 0 is passed in for this value or if the value is less than currentTime, then the sound will start playing immediately. start may only be called one time and must be called before stop is called or an InvalidStateError exception MUST be thrown. An InvalidAccessError exception MUST be thrown if when is negative or is not a finite number. </param>
+            /// <param name='offset' type='double' mayBeNull='false' optional='true'>The offset parameter describes the offset time in the buffer (in seconds) where playback will begin. If 0 is passed in for this value, then playback will start from the beginning of the buffer. An InvalidAccessError exception MUST be thrown if offset is negative or is not a finite number. </param>
+            /// <param name='duration' type='double' mayBeNull='false' optional='true'>The duration parameter describes the duration of the portion (in seconds) to be played. If this parameter is not passed, the duration will be equal to the total duration of the AudioBuffer minus the offset parameter. Thus if neither offset nor duration are specified then the implied duration is the total duration of the AudioBuffer. An InvalidAccessError exception MUST be thrown if duration is negative or is not a finite number.</param>
+        }
+        this.stop = function (when) {
+            /// <summary>Schedules a sound to stop playback at an exact time. </summary>
+            /// <returns type='void'></returns>
+            /// <param name='when' type='double' mayBeNull='false' optional='true'>The when parameter describes at what time (in seconds) the sound should stop playing. It is in the same time coordinate system as the AudioContext's currentTime attribute. If 0 is passed in for this value or if the value is less than currentTime, then the sound will stop playing immediately. An InvalidAccessError exception MUST be thrown if when is negative or is not a finite number. If stop is called again after already have been called, the last invocation will be the only one applied; stop times set by previous calls will not be applied, unless the buffer has already stopped prior to any subsequent calls. If the buffer has already stopped, further calls to stop will have no effect. If a stop time is reached prior to the scheduled start time, the sound will not play. </param>            
+        }
+    }
+    AudioBufferSourceNode.prototype = new AudioNode();
+
+
+    //TODO: Find a way to show these posibilities
     /**
      * @readonly
      * @enum {string}
@@ -180,12 +212,12 @@ AudioContext = function () {
         this.start = function (when) {
             /// <summary>Defined the same as the when parameter of the <seealso>AudioBufferSourceNode.</seealso> </summary>
             /// <returns type='void'></returns>
-            /// <param name='when' type='double' optional='true'></param 
+            /// <param name='when' type='double' optional='true'></param>
         }
         this.stop = function (when) {
             /// <summary>Defined as in AudioBufferSourceNode.</summary>
             /// <returns type='void'></returns>
-            /// <param name='when' type='double' optional='true'></param 
+            /// <param name='when' type='double' optional='true'></param>
         }
         this.setPeriodicWave = function (periodicWave) {
             /// <summary>Sets an arbitrary custom periodic waveform given a PeriodicWave. </summary>
@@ -218,8 +250,13 @@ AudioContext = function () {
         return new BiquadFilterNode();
     }
 
-    this.createBuffer = function () {
+    this.createBuffer = function (numberOfChannels, length, sampleRate) {
         ///<summary>Creates an AudioBuffer of the given size. The audio data in the buffer will be zero-initialized (silent). An exception will be thrown if the numberOfChannels or sampleRate are out-of-bounds.  </summary>
+        /// <param name='numberOfChannels' type='unsigned long' mayBeNull='false'></param 
+        /// <param name='length' type='unsigned long' mayBeNull='false'></param 
+        /// <param name='sampleRate' type='float' mayBeNull='false'></param 
+        /// <returns type='AudioBuffer'>An AudioBuffer</returns>
+        return new AudioBuffer();
     }
     this.createBufferSource = function () {
         ///<summary>Creates an AudioBufferSourceNode that can be used to play audio data contained within an AudioBuffer object..  </summary>
