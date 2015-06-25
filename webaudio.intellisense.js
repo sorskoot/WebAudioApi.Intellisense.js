@@ -232,6 +232,35 @@ AudioContext = function () {
         ///<field name='gain' type='AudioParam'>gain</field>        
     }
     GainNode.prototype = new AudioNode();
+
+    var ChannelMergerNode = function () {
+        ///<summary>
+        ///The ChannelMergerNode is for use in more advanced applications and would often be used in conjunction with ChannelSplitterNode. 
+        ///This interface represents an AudioNode for combining channels from multiple audio streams into a single audio stream. It has a variable number of inputs (defaulting to 6), but not all of them need be connected. There is a single output whose audio stream has a number of channels equal to the number of inputs. 
+        ///</summary>
+    }
+    ChannelMergerNode.prototype = new AudioNode();
+
+    var ChannelSplitterNode = function () {
+        ///<summary>
+        ///The ChannelSplitterNode is for use in more advanced applications and would often be used in conjunction with ChannelMergerNode. 
+        ///This interface represents an AudioNode for accessing the individual channels of an audio stream in the routing graph. It has a single input, and a number of "active" outputs which equals the number of channels in the input audio stream. For example, if a stereo input is connected to an ChannelSplitterNode then the number of active outputs will be two (one from the left channel and one from the right). There are always a total number of N outputs (determined by the numberOfOutputs parameter to the AudioContext method createChannelSplitter()), The default number is 6 if this value is not provided. Any outputs which are not "active" will output silence and would typically not be connected to anything. 
+        ///</summary>
+    }
+    ChannelSplitterNode.prototype = new AudioNode();
+
+    var DynamicsCompressorNode = function () {
+        ///<summary>DynamicsCompressorNode is an AudioNode processor implementing a dynamics compression effect. 
+        ///Dynamics compression is very commonly used in musical production and game audio. It lowers the volume of the loudest parts of the signal and raises the volume of the softest parts. Overall, a louder, richer, and fuller sound can be achieved. It is especially important in games and musical applications where large numbers of individual sounds are played simultaneous to control the overall signal level and help avoid clipping (distorting) the audio output to the speakers. 
+        ///</summary>
+        /// <field name='attack' type='AudioParam'>The amount of time (in seconds) to reduce the gain by 10dB. Its default value is 0.003, with a nominal range of 0 to 1. </field>
+        /// <field name='knee' type='AudioParam'>A decibel value representing the range above the threshold where the curve smoothly transitions to the "ratio" portion. Its default value is 30, with a nominal range of 0 to 40. </field>
+        /// <field name='ratio' type='AudioParam'>The amount of dB change in input for a 1 dB change in output. Its default value is 12, with a nominal range of 1 to 20. </field>
+        /// <field name='reduction' type='float'>A read-only decibel value for metering purposes, representing the current amount of gain reduction that the compressor is applying to the signal. If fed no signal the value will be 0 (no gain reduction). </field>
+        /// <field name='release' type='AudioParam'>The amount of time (in seconds) to increase the gain by 10dB. Its default value is 0.250, with a nominal range of 0 to 1. </field>
+        /// <field name='threshold' type='AudioParam'>The decibel value above which the compression will start taking effect. Its default value is -24, with a nominal range of -100 to 0. </field>
+    }
+    DynamicsCompressorNode.prototype = new AudioNode();
     // **************************************************************************************
     // **************************************************************************************
     // ** Functions
@@ -260,12 +289,18 @@ AudioContext = function () {
     }
     this.createBufferSource = function () {
         ///<summary>Creates an AudioBufferSourceNode that can be used to play audio data contained within an AudioBuffer object..  </summary>
+        /// <returns type='AudioBufferSourceNode'>An AudioBufferSource</returns>
+        return new AudioBufferSourceNode();
     }
     this.createChannelMerger = function () {
         ///<summary>Creates a ChannelMergerNode representing a channel merger. An exception will be thrown for invalid parameter values.  </summary>
+        /// <returns type='ChannelMergerNode'>A ChannelMergerNode</returns>
+        return new ChannelMergerNode();
     }
     this.createChannelSplitter = function () {
         ///<summary>Creates a ChannelSplitterNode representing a channel splitter. An exception will be thrown for invalid parameter values.  </summary>
+        /// <returns type='ChannelSplitterNode'>A ChannelSplitterNode</returns>
+        return new ChannelSplitterNode();
     }
     this.createConvolver = function () {
         ///<summary>Creates a ConvolverNode, commonly used to add reverb to audio.  </summary>
@@ -275,9 +310,12 @@ AudioContext = function () {
     }
     this.createDynamicsCompressor = function () {
         ///<summary>Creates a DynamicsCompressorNode, used to apply compression to audio.  </summary>
+        /// <returns type='DynamicsCompressorNode'>A DynamicsCompressorNode</returns>
+        return new DynamicsCompressorNode();
     }
     this.createGain = function () {
         ///<summary>Creates a GainNode, used to control the volume of audio.  </summary>
+        /// <returns type='GainNode'>A GainNode</returns>
         return new GainNode();
     }
     this.createMediaElementSource = function () {
