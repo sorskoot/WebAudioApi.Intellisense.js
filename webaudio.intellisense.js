@@ -334,6 +334,12 @@ AudioContext = function () {
     }
     PannerNode.prototype = new AudioNode();
 
+    var ScriptProcessorNode = function () {
+        /// <deprecated type="deprecate" >This interface is an AudioNode which can generate, process, or analyse audio directly using JavaScript. This node type is deprecated, to be replaced by the AudioWorkerNode.</deprecated>
+        /// <field name='bufferSize' type='long'>The size of the buffer (in sample-frames) which needs to be processed each time onaudioprocess is called. Legal values are (256, 512, 1024, 2048, 4096, 8192, 16384). </field>
+        /// <field name='onaudioprocess' type='EventHandler'>A property used to set the EventHandler (described in   HTML[HTML]) for the audioprocess event that is dispatched to ScriptProcessorNode node types. An event of type AudioProcessingEvent will be dispatched to the event handler. </field>
+    }
+    ScriptProcessorNode.prototype = new AudioNode();
     // **************************************************************************************
     // **************************************************************************************
     // ** Functions
@@ -354,9 +360,9 @@ AudioContext = function () {
 
     this.createBuffer = function (numberOfChannels, length, sampleRate) {
         ///<summary>Creates an AudioBuffer of the given size. The audio data in the buffer will be zero-initialized (silent). An exception will be thrown if the numberOfChannels or sampleRate are out-of-bounds.  </summary>
-        /// <param name='numberOfChannels' type='unsigned long' mayBeNull='false'></param 
-        /// <param name='length' type='unsigned long' mayBeNull='false'></param 
-        /// <param name='sampleRate' type='float' mayBeNull='false'></param 
+        /// <param name='numberOfChannels' type='unsigned long' mayBeNull='false'></param>
+        /// <param name='length' type='unsigned long' mayBeNull='false'></param>
+        /// <param name='sampleRate' type='float' mayBeNull='false'></param>
         /// <returns type='AudioBuffer'>An AudioBuffer</returns>
         return new AudioBuffer();
     }
@@ -417,8 +423,13 @@ AudioContext = function () {
         ///<returns type='PannerNode'>A pannernode</returns>
         return new PannerNode();
     }
-    this.createScriptProcessor = function () {
-        ///<summary>Creates a ScriptProcessorNode for direct audio processing using JavaScript. An exception will be thrown if bufferSize or numberOfInputChannels or numberOfOutputChannels are outside the valid range.  </summary>
+    this.createScriptProcessor = function (bufferSize, numberOfInputChannels, numberOfOutputChannels) {
+        /// <summary>This method is DEPRECATED, as it is intended to be replaced by createAudioWorker. Creates a ScriptProcessorNode for direct audio processing using JavaScript. An IndexSizeError exception MUST be thrown if bufferSize or numberOfInputChannels or numberOfOutputChannels are outside the valid range. numberOfInputChannels and numberOfOutputChannels to be zero. </summary>
+        /// <param name='bufferSize' type='unsigned long' optional='true' mayBeNull='false'>The bufferSize parameter determines the buffer size in units of sample-frames. If it's not passed in, or if the value is 0, then the implementation will choose the best buffer size for the given environment, which will be constant power of 2 throughout the lifetime of the node. Otherwise if the author explicitly specifies the bufferSize, it must be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384. This value controls how frequently the audioprocess event is dispatched and how many sample-frames need to be processed each call. Lower values for bufferSize will result in a lower (better) latency. Higher values will be necessary to avoid audio breakup and glitches.</param>
+        /// <param name='numberOfInputChannels' type='unsigned long' optional='true' mayBeNull='false'>This parameter determines the number of channels for this node's input. Values of up to 32 must be supported. </param>
+        /// <param name='numberOfOutputChannels' type='unsigned long' optional='true' mayBeNull='false'>This parameter determines the number of channels for this node's output. Values of up to 32 must be supported. It is invalid for both.</param>
+        /// <returns type='ScriptProcessorNode'>A ScriptProcessorNode</returns>
+        return new ScriptProcessorNode();
     }
     this.createWaveShaper = function () {
         ///<summary>Creates a WaveShaperNode, used to apply a distortion effect to audio.  </summary>
