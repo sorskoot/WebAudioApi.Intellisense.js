@@ -340,6 +340,28 @@ AudioContext = function () {
         /// <field name='onaudioprocess' type='EventHandler'>A property used to set the EventHandler (described in   HTML[HTML]) for the audioprocess event that is dispatched to ScriptProcessorNode node types. An event of type AudioProcessingEvent will be dispatched to the event handler. </field>
     }
     ScriptProcessorNode.prototype = new AudioNode();
+
+    var OverSampleType={
+        none:"none",
+        _2x:"2x",
+        _4x:"4x"
+    };
+
+    var WaveShaperNode = function () {
+        ///<summary>WaveShaperNode is an AudioNode processor implementing non-linear distortion effects. Non-linear waveshaping distortion is commonly used for both subtle non-linear warming, or more obvious distortion effects. Arbitrary non-linear shaping curves may be specified. </summary>
+        /// <field name='curve' type='Float32Array' mayBeNull='true'>The shaping curve used for the waveshaping effect. The input signal is nominally within the range [-1; 1]. Each input sample within this range will index into the shaping curve, with a signal level of zero corresponding to the center value of the curve array if there are an odd number of entries, or interpolated between the two centermost values if there are an even number of entries in the array. Any sample value less than -1 will correspond to the first value in the curve array. Any sample value greater than +1 will correspond to the last value in the curve array. The implementation must perform linear interpolation between adjacent points in the curve. Initially the curve attribute is null, which means that the WaveShaperNode will pass its input to its output without modification. Values of the curve are spread with equal spacing in the [-1; 1] range. This means that a curve with a even number of value will not have a value for a signal at zero, and a curve with an odd number of value will have a value for a signal at zero. A InvalidAccessError MUST be thrown if this attribute is set with a Float32Array that has a length less than 2. </field>
+        /// <field name='oversample' type='OverSampleType'>
+        /// Specifies what type of oversampling (if any) should be used when applying the shaping curve. The default value is "none", meaning the curve will be applied directly to the input samples. A value of "2x" or "4x" can improve the quality of the processing by avoiding some aliasing, with the "4x" value yielding the highest quality. For some applications, it's better to use no oversampling in order to get a very precise shaping curve. 
+        ///  value of "2x" or "4x" means that the following steps are be performed: 
+        /// <list type='dotted'>
+        ///     <para>Up-sample the input samples to 2x or 4x the sample-rate of the AudioContext. Thus for each processing block of 128 samples, generate 256 (for 2x) or 512 (for 4x) samples. </para>
+        ///     <para>Apply the shaping curve. </para>
+        ///     <para>Down-sample the result back to the sample-rate of the AudioContext. Thus taking the 256 (or 512) processed samples, generating 128 as the final result.</para>
+        ///</list>
+        ///The exact up-sampling and down-sampling filters are not specified, and can be tuned for sound quality (low aliasing, etc.), low latency, and performance. 
+        ///</field>
+    }
+    WaveShaperNode.prototype = new AudioNode();
     // **************************************************************************************
     // **************************************************************************************
     // ** Functions
@@ -432,7 +454,9 @@ AudioContext = function () {
         return new ScriptProcessorNode();
     }
     this.createWaveShaper = function () {
-        ///<summary>Creates a WaveShaperNode, used to apply a distortion effect to audio.  </summary>
+        /// <summary>Creates a WaveShaperNode representing a non-linear distortion.</summary>
+        /// <returns type='WaveShaperNode'>A WaveShaperNode</returns>
+        return new WaveShaperNode();
     }
     this.decodeAudioData = function () {
         ///<summary>Asynchronously decodes the audio file data contained in the ArrayBuffer. The ArrayBuffer can, for example, be loaded from an XMLHttpRequest with the new responseType and response attributes. Audio file data can be in any of the formats supported by the audio element. The decodeAudioData() method is preferred over the createBuffer() from ArrayBuffer method because it is asynchronous and does not block the main JavaScript thread. </summary>
