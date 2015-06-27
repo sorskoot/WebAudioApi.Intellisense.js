@@ -261,6 +261,17 @@ AudioContext = function () {
         /// <field name='threshold' type='AudioParam'>The decibel value above which the compression will start taking effect. Its default value is -24, with a nominal range of -100 to 0. </field>
     }
     DynamicsCompressorNode.prototype = new AudioNode();
+
+    var ConvolverNode =function(){
+        /// <summary>
+        ///This interface represents a processing node which applies a linear convolution effect given an impulse response.        
+        ///The input of this node is either mono (1 channel) or stereo (2 channels) and cannot be increased. Connections from nodes with fewer or more channels will be up-mixed or down-mixed appropriately, but a NotSupportedError MUST be thrown if an attempt is made to set channelCount to a value great than 2 or if channelCountMode is set to "max". 
+        ///</summary>
+        /// <field name='buffer' type='AudioBuffer' mayBeNull='true'>A mono, stereo, or 4-channel AudioBuffer containing the (possibly multi-channel) impulse response used by the ConvolverNode. The AudioBuffer must have 1, 2, or 4 channels or a NotSupportedError exception MUST be thrown. This AudioBuffer must be of the same sample-rate as the AudioContext or an NotSupportedError exception MUST be thrown. At the time when this attribute is set, the buffer and the state of the normalize attribute will be used to configure the ConvolverNode with this impulse response having the given normalization. The initial value of this attribute is null. </field>
+        /// <field name='normalize' type='boolean'>Controls whether the impulse response from the buffer will be scaled by an equal-power normalization when the buffer atttribute is set. Its default value is true in order to achieve a more uniform output level from the convolver when loaded with diverse impulse responses. If normalize is set to false, then the convolution will be rendered with no pre-processing/scaling of the impulse response. Changes to this value do not take effect until the next time the buffer attribute is set. </field>
+    }
+    ConvolverNode.prototype = new AudioNode();
+
     // **************************************************************************************
     // **************************************************************************************
     // ** Functions
@@ -304,6 +315,8 @@ AudioContext = function () {
     }
     this.createConvolver = function () {
         ///<summary>Creates a ConvolverNode, commonly used to add reverb to audio.  </summary>
+        ///<returns type='ConvolverNode'>A ConvolverNode</returns>
+        return new ConvolverNode();
     }
     this.createDelay = function () {
         ///<summary>Creates a DelayNode representing a variable delay line. Default delay is 0 seconds.  </summary>
