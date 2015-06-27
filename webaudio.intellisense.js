@@ -262,7 +262,7 @@ AudioContext = function () {
     }
     DynamicsCompressorNode.prototype = new AudioNode();
 
-    var ConvolverNode =function(){
+    var ConvolverNode = function () {
         /// <summary>
         ///This interface represents a processing node which applies a linear convolution effect given an impulse response.        
         ///The input of this node is either mono (1 channel) or stereo (2 channels) and cannot be increased. Connections from nodes with fewer or more channels will be up-mixed or down-mixed appropriately, but a NotSupportedError MUST be thrown if an attempt is made to set channelCount to a value great than 2 or if channelCountMode is set to "max". 
@@ -278,6 +278,10 @@ AudioContext = function () {
     }
     DelayNode.prototype = new AudioNode();
 
+    var MediaElementAudioSourceNode = function () {
+        /// <summary>This interface represents an audio source from an audio or video element.</summary>
+    }
+    MediaElementAudioSourceNode.prototype = new AudioNode();
     // **************************************************************************************
     // **************************************************************************************
     // ** Functions
@@ -340,8 +344,11 @@ AudioContext = function () {
         /// <returns type='GainNode'>A GainNode</returns>
         return new GainNode();
     }
-    this.createMediaElementSource = function () {
+    this.createMediaElementSource = function (mediaElement) {
         ///<summary>Creates a MediaElementAudioSourceNode, given an HTMLMediaElement. As a consequence of calling this method, audio playback from the HTMLMediaElement will be re-routed into the processing graph of the AudioContext.  </summary>
+        ///<param name='mediaElement' type='HTMLMediaElement'>The media element that will be re-routed. </param>
+        ///<returns type='MediaElementAudioSourceNode '>An MediaElementAudioSourceNode </returns>
+        return new MediaElementAudioSourceNode();
     }
     this.createMediaStreamSource = function () {
         ///<summary>Creates a MediaStreamAudioSourceNode, given a MediaStream. As a consequence of calling this method, audio playback from the MediaStream will be re-routed into the processing graph of the AudioContext.  </summary>
@@ -367,6 +374,9 @@ AudioContext = function () {
 
 }
 
+
+// TODO:
+// * change types of params and fields to be ECMAScript languages types from the ECMAScript 5 specification
 
 // ** Copy-paste repository **
 // <field name='' type=''></field>
