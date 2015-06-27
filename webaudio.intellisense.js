@@ -289,6 +289,51 @@ AudioContext = function () {
     }
     MediaStreamAudioSourceNode.prototype = new AudioNode();
 
+    var PanningModelType = {
+        equalpower:"equalpower",
+        HRTF:"HRTF"
+    }
+    var DistanceModelType = {
+        linear:"linear",
+        inverse:"inverse",
+        exponential:"exponential"
+    };
+
+    var PannerNode = function () {
+        /// <summary>This interface represents a processing node which positions / spatializes an incoming audio stream in three-dimensional space. The spatialization is in relation to the AudioContext's AudioListener (listener attribute).</summary>
+        /// <field name='coneInnerAngle' type='float'>A parameter for directional audio sources, this is an angle, in degrees, inside of which there will be no volume reduction. The default value is 360, and the value is used modulo 360. </field>
+        /// <field name='coneOuterAngle' type='float'>A parameter for directional audio sources, this is an angle, in degrees, outside of which the volume will be reduced to a constant value of coneOuterGain. The default value is 360 and the value is used modulo 360.</field>
+        /// <field name='coneOuterGain' type='float'>A parameter for directional audio sources, this is the gain outside of the coneOuterAngle. The default value is 0. It is a linear value (not dB) in the range [0, 1]. An InvalidStateError MUST be thrown if the parameter is outside this range. </field>
+        /// <field name='distanceModel' type='DistanceModelType'>Specifies the distance model used by this PannerNode. Defaults to "inverse".</field>
+        /// <field name='maxDistance' type='float'>The maximum distance between source and listener, after which the volume will not be reduced any further. The default value is 10000.</field>
+        /// <field name='panningModel' type='PanningModelType'>Specifies the panning model used by this PannerNode. Defaults to "equalpower". </field>
+        /// <field name='refDistance' type='float'>A reference distance for reducing volume as source move further from the listener. The default value is 1. </field>
+        /// <field name='rolloffFactor' type='float'>Describes how quickly the volume is reduced as source moves away from listener. The default value is 1. </field>
+        this.setOrientation = function (x, y, z)
+        {
+            /// <summary>This interface is an audio destination representing a MediaStream with a single AudioMediaStreamTrack. This MediaStream is created when the node is created and is accessible via the stream attribute. This stream can be used in a similar way as a MediaStream obtained via getUserMedia(), and can, for example, be sent to a remote peer using the RTCPeerConnection (described in [webrtc]) addStream() method. </summay>
+            /// <params name='x' type='float'>The x, y, z parameters represent a direction vector in 3D space. </params>
+            /// <params name='y' type='float'>The x, y, z parameters represent a direction vector in 3D space. </params>
+            /// <params name='z' type='float'>The x, y, z parameters represent a direction vector in 3D space. </params>
+            /// <returns type='void'></returns>
+        }
+        this.setPosition = function (x, y, z) {
+            /// <summary>Sets the position of the audio source relative to the listener attribute. A 3D cartesian coordinate system is used. </summay>
+            /// <params name='x' type='float'>The x, y, z parameters represent the coordinates in 3D space.</params>
+            /// <params name='y' type='float'>The x, y, z parameters represent the coordinates in 3D space. </params>
+            /// <params name='z' type='float'>The x, y, z parameters represent the coordinates in 3D space. </params>
+            /// <returns type='void'></returns>
+        }
+        this.setVelocity = function (x, y, z) {
+            /// <summary>Sets the velocity vector of the audio source. This vector controls both the direction of travel and the speed in 3D space. This velocity relative to the listener's velocity is used to determine how much doppler shift (pitch change) to apply. The units used for this vector is meters / second and is independent of the units used for position and orientation vectors. </summay>
+            /// <params name='x' type='float'>The x, y, z parameters describe a direction vector indicating direction of travel and intensity. </params>
+            /// <params name='y' type='float'>The x, y, z parameters describe a direction vector indicating direction of travel and intensity. </params>
+            /// <params name='z' type='float'>The x, y, z parameters describe a direction vector indicating direction of travel and intensity. </params>
+            /// <returns type='void'></returns>
+        }
+    }
+    PannerNode.prototype = new AudioNode();
+
     // **************************************************************************************
     // **************************************************************************************
     // ** Functions
@@ -364,10 +409,13 @@ AudioContext = function () {
     }
     this.createOscillator = function () {
         ///<summary>Creates an OscillatorNode, a source representing a periodic waveform. It basically generates a constant tone..  </summary>      
+        ///<returns type='OscilatorNode'>An OscilatorNode</returns>
         return new OscilatorNode();
     }
     this.createPanner = function () {
         ///<summary>Creates a PannerNode, used to spatialize an incoming audio stream in 3D space..  </summary>
+        ///<returns type='PannerNode'>A pannernode</returns>
+        return new PannerNode();
     }
     this.createScriptProcessor = function () {
         ///<summary>Creates a ScriptProcessorNode for direct audio processing using JavaScript. An exception will be thrown if bufferSize or numberOfInputChannels or numberOfOutputChannels are outside the valid range.  </summary>
@@ -378,9 +426,6 @@ AudioContext = function () {
     this.decodeAudioData = function () {
         ///<summary>Asynchronously decodes the audio file data contained in the ArrayBuffer. The ArrayBuffer can, for example, be loaded from an XMLHttpRequest with the new responseType and response attributes. Audio file data can be in any of the formats supported by the audio element. The decodeAudioData() method is preferred over the createBuffer() from ArrayBuffer method because it is asynchronous and does not block the main JavaScript thread. </summary>
     }
-
-
-
 }
 
 
