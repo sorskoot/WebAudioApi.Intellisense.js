@@ -272,6 +272,12 @@ AudioContext = function () {
     }
     ConvolverNode.prototype = new AudioNode();
 
+    var DelayNode = function () {
+        /// <summary>A delay-line is a fundamental building block in audio applications. This interface is an AudioNode with a single input and single output.</summary>
+        /// <field name='delayTime' type='AudioParam'>An AudioParam object representing the amount of delay (in seconds) to apply. Its default value is 0 (no delay). The minimum value is 0 and the maximum value is determined by the maxDelayTime argument to the AudioContext method createDelay. If DelayNode is part of a cycle, then the value of the delayTime attribute is clamped to a minimum of 128 frames (one block). </field>
+    }
+    DelayNode.prototype = new AudioNode();
+
     // **************************************************************************************
     // **************************************************************************************
     // ** Functions
@@ -318,8 +324,11 @@ AudioContext = function () {
         ///<returns type='ConvolverNode'>A ConvolverNode</returns>
         return new ConvolverNode();
     }
-    this.createDelay = function () {
+    this.createDelay = function (maxDelayTime) {
         ///<summary>Creates a DelayNode representing a variable delay line. Default delay is 0 seconds.  </summary>
+        ///<param name='maxDelayTime' type='double' optional='true' mayBeNull='false'>The maxDelayTime parameter is optional and specifies the maximum delay time in seconds allowed for the delay line. If specified, this value MUST be greater than zero and less than three minutes or a NotSupportedError exception MUST be thrown. </param>
+        ///<returns type='DelayNode'>A DelayNode</returns>
+        return new DelayNode();
     }
     this.createDynamicsCompressor = function () {
         ///<summary>Creates a DynamicsCompressorNode, used to apply compression to audio.  </summary>
