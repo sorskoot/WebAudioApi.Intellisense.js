@@ -282,6 +282,13 @@ AudioContext = function () {
         /// <summary>This interface represents an audio source from an audio or video element.</summary>
     }
     MediaElementAudioSourceNode.prototype = new AudioNode();
+
+    var MediaStreamAudioSourceNode = function () {
+        /// <summary>This interface is an audio destination representing a MediaStream with a single AudioMediaStreamTrack. This MediaStream is created when the node is created and is accessible via the stream attribute. This stream can be used in a similar way as a MediaStream obtained via getUserMedia(), and can, for example, be sent to a remote peer using the RTCPeerConnection (described in [webrtc]) addStream() method. </summay>
+        /// <field name='stream' type='MediaStream'>A MediaStream containing a single AudioMediaStreamTrack with the same number of channels as the node itself. </field>
+    }
+    MediaStreamAudioSourceNode.prototype = new AudioNode();
+
     // **************************************************************************************
     // **************************************************************************************
     // ** Functions
@@ -352,6 +359,8 @@ AudioContext = function () {
     }
     this.createMediaStreamSource = function () {
         ///<summary>Creates a MediaStreamAudioSourceNode, given a MediaStream. As a consequence of calling this method, audio playback from the MediaStream will be re-routed into the processing graph of the AudioContext.  </summary>
+        ///<returns type='MediaStreamAudioSourceNode'>An MediaStreamAudioSourceNode</returns>
+        return new MediaStreamAudioSourceNode();
     }
     this.createOscillator = function () {
         ///<summary>Creates an OscillatorNode, a source representing a periodic waveform. It basically generates a constant tone..  </summary>      
